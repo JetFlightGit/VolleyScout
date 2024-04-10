@@ -9,27 +9,28 @@ import React, { useState } from "react";
 import { defaultStyles } from "@/constants/styles";
 import colors from "@/constants/colors";
 import { Link, useRouter } from "expo-router";
-// import { useSignUp } from "@clerk/clerk-expo";
+import { useSignUp } from "@clerk/clerk-expo";
 
 const Page = () => {
   const [countryCode, setCountryCode] = useState("+49");
   const [phoneNumber, setPhoneNumber] = useState("");
 
-  // const { signUp } = useSignUp();
+  const { signUp } = useSignUp();
+  const router = useRouter();
 
   const onSignup = async () => {
-    //   const fullPhoneNumber = `${countryCode}${phoneNumber}`;
-    //   try {
-    //     await signUp!.create({
-    //       phoneNumber: fullPhoneNumber,
-    //     });
-    //     router.push({
-    //       pathname: "/verify/[phone]",
-    //       params: { phone: fullPhoneNumber },
-    //     });
-    //   } catch (error) {
-    //     console.log(error);
-    //   }
+    const fullPhoneNumber = `${countryCode}${phoneNumber}`;
+    try {
+      await signUp!.create({
+        phoneNumber: fullPhoneNumber,
+      });
+      router.push({
+        pathname: "/verify/[phone]",
+        params: { phone: fullPhoneNumber },
+      });
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
