@@ -1,5 +1,5 @@
 import colors from "@/constants/colors";
-import { ClerkProvider } from "@clerk/clerk-expo";
+import { ClerkProvider, useAuth } from "@clerk/clerk-expo";
 import { Ionicons } from "@expo/vector-icons";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { useFonts } from "expo-font";
@@ -45,6 +45,7 @@ const InitialLayout = () => {
   });
 
   const router = useRouter();
+  const { isLoaded, isSignedIn } = useAuth();
 
   // Expo Router uses Error Boundaries to catch errors in the navigation tree.
   useEffect(() => {
@@ -56,6 +57,13 @@ const InitialLayout = () => {
       SplashScreen.hideAsync();
     }
   }, [loaded]);
+
+  useEffect(() => {
+    if (isSignedIn) {
+      console.log("signed in");
+      //Todo Router to MainPage
+    }
+  });
 
   if (!loaded) {
     return null;
@@ -113,6 +121,21 @@ const InitialLayout = () => {
           animation: "slide_from_bottom",
           headerShadowVisible: false,
           headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="verify/[phone]"
+        options={{
+          title: "",
+          headerShadowVisible: false,
+          headerStyle: {
+            backgroundColor: colors.background,
+          },
+          headerLeft: () => (
+            <TouchableOpacity onPress={router.back}>
+              <Ionicons name="arrow-back" size={44} color={colors.dark} />
+            </TouchableOpacity>
+          ),
         }}
       />
     </Stack>

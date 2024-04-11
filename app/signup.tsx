@@ -20,16 +20,18 @@ const Page = () => {
 
   const onSignup = async () => {
     const fullPhoneNumber = `${countryCode}${phoneNumber}`;
+    console.log(fullPhoneNumber);
     try {
       await signUp!.create({
         phoneNumber: fullPhoneNumber,
       });
+      signUp!.preparePhoneNumberVerification();
       router.push({
         pathname: "/verify/[phone]",
         params: { phone: fullPhoneNumber },
       });
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   };
 

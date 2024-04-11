@@ -4,12 +4,14 @@ import {
   StyleSheet,
   TextInput,
   TouchableOpacity,
+  Alert,
 } from "react-native";
 import React, { useState } from "react";
 import { defaultStyles } from "@/constants/styles";
 import colors from "@/constants/colors";
-import { Link } from "expo-router";
+import { Link, useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
+import { isClerkAPIResponseError, useSignIn } from "@clerk/clerk-expo";
 
 enum SignInType {
   Phone,
@@ -18,18 +20,50 @@ enum SignInType {
 }
 
 const Page = () => {
+  const [countryCode, setCountryCode] = useState("+49");
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const router = useRouter();
+  const { signIn } = useSignIn();
+
   const onSignin = async (type: SignInType) => {
     if (type === SignInType.Email) {
       console.log("onEmailSignin");
     } else if (type === SignInType.Google) {
       console.log("onGoogleSignin");
     } else if (type === SignInType.Phone) {
-      console.log("onPhoneSignin");
+      try {
+        const fullPhoneNumber = `${countryCode}${phoneNumber}`;
+
+        const { supportedFirstFactors } = await signIn!.create({
+          identifier: fullPhoneNumber,
+        });
+        const firstPhoneFactor: any = supportedFirstFactors.find(
+          (factor: any) => {
+            return factor.strategy === "phone_code";
+          },
+        );
+
+        const { phoneNumberId } = firstPhoneFactor;
+
+        await signIn!.prepareFirstFactor({
+          strategy: "phone_code",
+          phoneNumberId,
+        });
+
+        router.push({
+          pathname: "/verify/[phone]",
+          params: { phone: fullPhoneNumber, signin: "true" },
+        });
+      } catch (err) {
+        console.log("error", JSON.stringify(err, null, 2));
+        if (isClerkAPIResponseError(err)) {
+          if (err.errors[0].code === "form_identifier_not_found") {
+            Alert.alert("Error", err.errors[0].message);
+          }
+        }
+      }
     }
   };
-
-  const [countryCode, setCountryCode] = useState("+49");
-  const [phoneNumber, setPhoneNumber] = useState("");
 
   return (
     <View style={defaultStyles.container}>
@@ -63,7 +97,7 @@ const Page = () => {
           phoneNumber !== "" ? styles.enabled : styles.disabled,
           { marginBottom: 20, marginTop: 20 },
         ]}
-        // onPress={() => onSignin(SignInType.Phone)}
+        onPress={() => onSignin(SignInType.Phone)}
         disabled={phoneNumber === ""}
       >
         <Text style={defaultStyles.buttonText}>Continue</Text>
