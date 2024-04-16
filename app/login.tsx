@@ -11,23 +11,85 @@ import { defaultStyles } from "@/constants/styles";
 import colors from "@/constants/colors";
 import { Link, useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
-import { isClerkAPIResponseError, useSignIn } from "@clerk/clerk-expo";
+import {
+  isClerkAPIResponseError,
+  useClerk,
+  useSignIn,
+} from "@clerk/clerk-expo";
 
 enum SignInType {
   Phone,
   Email,
   Google,
+  EmailPassword,
 }
 
 const Page = () => {
   const [countryCode, setCountryCode] = useState("+49");
   const [phoneNumber, setPhoneNumber] = useState("");
+  const [email, setEmail] = useState("");
   const router = useRouter();
-  const { signIn } = useSignIn();
+  const { signIn, setActive } = useSignIn();
+  const { signOut } = useClerk();
 
   const onSignin = async (type: SignInType) => {
     if (type === SignInType.Email) {
-      console.log("onEmailSignin");
+      try {
+        console.log(email);
+        const { supportedFirstFactors } = await signIn!.create({
+          identifier: email,
+        });
+        const firstEmailFactor: any = supportedFirstFactors.find(
+          (factor: any) => {
+            return factor.strategy === "email_code";
+          },
+        );
+
+        const { emailAddressId } = firstEmailFactor;
+
+        await signIn!.prepareFirstFactor({
+          strategy: "email_code",
+          emailAddressId,
+        });
+
+        router.push({
+          pathname: "/verify/email/[email]",
+          params: { email: email, signin: "true" },
+        });
+      } catch (err) {
+        console.log("Error on Signin Email");
+        console.log("error", JSON.stringify(err, null, 2));
+        if (isClerkAPIResponseError(err)) {
+          if (err.errors[0].code === "form_identifier_not_found") {
+            Alert.alert("Error", err.errors[0].message);
+          }
+        }
+      }
+    } else if (type === SignInType.EmailPassword) {
+      try {
+        signOut();
+        const password = "Clefli1.";
+        const completeSignIn = await signIn!.create({
+          identifier: email,
+          password,
+        });
+
+        if (completeSignIn.status !== "complete") {
+          // The status can also be `needs_factor_on', 'needs_factor_two', or 'needs_identifier'
+          // Please see https://clerk.com/docs/references/react/use-sign-in#result-status for  more information
+          console.log(JSON.stringify(completeSignIn, null, 2));
+        }
+
+        if (completeSignIn.status === "complete") {
+          // If complete, user exists and provided password match -- set session active
+          await setActive!({ session: completeSignIn.createdSessionId });
+          // redirect the user how you see fit.
+        }
+      } catch (err: any) {
+        // This can return an array of errors.
+        // See https://clerk.com/docs/custom-flows/error-handling to learn about error handling
+        console.error(JSON.stringify(err, null, 2));
+      }
     } else if (type === SignInType.Google) {
       console.log("onGoogleSignin");
     } else if (type === SignInType.Phone) {
@@ -51,7 +113,7 @@ const Page = () => {
         });
 
         router.push({
-          pathname: "/verify/[phone]",
+          pathname: "/verify/phone/[phone]",
           params: { phone: fullPhoneNumber, signin: "true" },
         });
       } catch (err) {
@@ -69,36 +131,28 @@ const Page = () => {
     <View style={defaultStyles.container}>
       <Text style={defaultStyles.header}>Welcome back!</Text>
       <Text style={defaultStyles.descriptionText}>
-        Enter the phone number associated with your account.
+        Enter the Email address associated with your account.
       </Text>
 
       <View style={styles.inputContainer}>
         <TextInput
-          style={[styles.inputField, { width: 60 }]}
-          value={countryCode}
-          placeholder="+XX"
-          placeholderTextColor={colors.gray}
-          keyboardType="numeric"
-          onChangeText={setCountryCode}
-        />
-        <TextInput
           style={[styles.inputField, { flex: 1 }]}
-          placeholder="Phone number"
+          placeholder="Email address"
           placeholderTextColor={colors.gray}
-          keyboardType="numeric"
-          value={phoneNumber}
-          onChangeText={setPhoneNumber}
+          keyboardType="email-address"
+          value={email}
+          onChangeText={setEmail}
         />
       </View>
 
       <TouchableOpacity
         style={[
           defaultStyles.pillButton,
-          phoneNumber !== "" ? styles.enabled : styles.disabled,
+          email !== "" ? styles.enabled : styles.disabled,
           { marginBottom: 20, marginTop: 20 },
         ]}
-        onPress={() => onSignin(SignInType.Phone)}
-        disabled={phoneNumber === ""}
+        onPress={() => onSignin(SignInType.Email)}
+        disabled={email === ""}
       >
         <Text style={defaultStyles.buttonText}>Continue</Text>
       </TouchableOpacity>

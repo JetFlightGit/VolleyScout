@@ -45,7 +45,7 @@ const InitialLayout = () => {
   });
 
   const router = useRouter();
-  const { isLoaded, isSignedIn } = useAuth();
+  const { isSignedIn } = useAuth();
 
   // Expo Router uses Error Boundaries to catch errors in the navigation tree.
   useEffect(() => {
@@ -124,7 +124,22 @@ const InitialLayout = () => {
         }}
       />
       <Stack.Screen
-        name="verify/[phone]"
+        name="verify/phone/[phone]"
+        options={{
+          title: "",
+          headerShadowVisible: false,
+          headerStyle: {
+            backgroundColor: colors.background,
+          },
+          headerLeft: () => (
+            <TouchableOpacity onPress={router.back}>
+              <Ionicons name="arrow-back" size={44} color={colors.dark} />
+            </TouchableOpacity>
+          ),
+        }}
+      />
+      <Stack.Screen
+        name="verify/email/[email]"
         options={{
           title: "",
           headerShadowVisible: false,

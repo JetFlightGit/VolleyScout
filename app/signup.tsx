@@ -10,28 +10,43 @@ import { defaultStyles } from "@/constants/styles";
 import colors from "@/constants/colors";
 import { Link, useRouter } from "expo-router";
 import { useSignUp } from "@clerk/clerk-expo";
+import Hairline from "@/components/hairline";
 
 const Page = () => {
   const [countryCode, setCountryCode] = useState("+49");
   const [phoneNumber, setPhoneNumber] = useState("");
+  const [email, setEmail] = useState("");
 
   const { signUp } = useSignUp();
   const router = useRouter();
 
   const onSignup = async () => {
-    const fullPhoneNumber = `${countryCode}${phoneNumber}`;
-    console.log(fullPhoneNumber);
-    try {
-      await signUp!.create({
-        phoneNumber: fullPhoneNumber,
-      });
-      signUp!.preparePhoneNumberVerification();
-      router.push({
-        pathname: "/verify/[phone]",
-        params: { phone: fullPhoneNumber },
-      });
-    } catch (error) {
-      console.error(error);
+    if (email.length > 0) {
+      console.log(email);
+      try {
+        await signUp!.create({ emailAddress: email });
+        signUp!.prepareEmailAddressVerification();
+        router.push({
+          pathname: "/verify/email/[email]",
+          params: { email: email },
+        });
+      } catch (error) {
+        console.error("Email SignUp", error);
+      }
+    } else {
+      const fullPhoneNumber = `${countryCode}${phoneNumber}`;
+      try {
+        await signUp!.create({
+          phoneNumber: fullPhoneNumber,
+        });
+        signUp!.preparePhoneNumberVerification();
+        router.push({
+          pathname: "/verify/phone/[phone]",
+          params: { phone: fullPhoneNumber },
+        });
+      } catch (error) {
+        console.error(error);
+      }
     }
   };
 
@@ -39,9 +54,9 @@ const Page = () => {
     <View style={defaultStyles.container}>
       <Text style={defaultStyles.header}>Lets get started!</Text>
       <Text style={defaultStyles.descriptionText}>
-        Enter your phone number. We will send you a confirmation code there.
+        Enter your phone number or email address. We will send you a
+        confirmation code there.
       </Text>
-
       <View style={styles.inputContainer}>
         <TextInput
           style={[styles.inputField, { width: 60 }]}
@@ -60,6 +75,17 @@ const Page = () => {
           onChangeText={setPhoneNumber}
         />
       </View>
+      <Hairline />
+      <View>
+        <TextInput
+          style={[styles.inputField, { width: "100%" }]}
+          value={email}
+          placeholder="Email Address"
+          placeholderTextColor={colors.gray}
+          keyboardType="email-address"
+          onChangeText={setEmail}
+        />
+      </View>
 
       <Link href={"/login"} style={{ marginTop: 20 }} replace asChild>
         <TouchableOpacity>
@@ -68,14 +94,21 @@ const Page = () => {
       </Link>
 
       <View style={{ flex: 1 }} />
+
       <TouchableOpacity
         style={[
           defaultStyles.pillButton,
-          phoneNumber !== "" ? styles.enabled : styles.disabled,
+          (phoneNumber !== "" || email !== "") &&
+          (phoneNumber === "" || email === "")
+            ? styles.enabled
+            : styles.disabled,
           { marginBottom: 20 },
         ]}
         onPress={onSignup}
-        disabled={phoneNumber === ""}
+        disabled={
+          (phoneNumber === "" && email === "") ||
+          (phoneNumber !== "" && email !== "")
+        }
       >
         <Text style={defaultStyles.buttonText}>Sign Up</Text>
       </TouchableOpacity>
