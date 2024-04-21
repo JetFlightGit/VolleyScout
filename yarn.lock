@@ -4696,7 +4696,7 @@ expo-modules-core@1.11.12:
   dependencies:
     invariant "^2.2.4"
 
-expo-router@~3.4.8:
+expo-router@^3.4.8:
   version "3.4.8"
   resolved "https://registry.npmjs.org/expo-router/-/expo-router-3.4.8.tgz"
   integrity sha512-fOOAWHH4LSPjPFtIZbApxdTNU8xSS8qKvhZ7PfWNMfx9510J1R1Ce/nwENPzcRLHRuVofDsSAEBfi4kV03fJwg==
@@ -4716,7 +4716,7 @@ expo-secure-store@~12.8.1:
   resolved "https://registry.npmjs.org/expo-secure-store/-/expo-secure-store-12.8.1.tgz"
   integrity sha512-Ju3jmkHby4w7rIzdYAt9kQyQ7HhHJ0qRaiQOInknhOLIltftHjEgF4I1UmzKc7P5RCfGNmVbEH729Pncp/sHXQ==
 
-expo-splash-screen@~0.26.4, expo-splash-screen@0.26.4:
+expo-splash-screen@^0.26.4, expo-splash-screen@0.26.4:
   version "0.26.4"
   resolved "https://registry.npmjs.org/expo-splash-screen/-/expo-splash-screen-0.26.4.tgz"
   integrity sha512-2DwofTQ0FFQCsvDysm/msENsbyNsJiAJwK3qK/oXeizECAPqD7bK19J4z9kuEbr7ORPX9MLnTQYKl6kmX3keUg==
@@ -4749,7 +4749,7 @@ expo-web-browser@>=12, expo-web-browser@~12.8.0, expo-web-browser@~12.8.2:
     compare-urls "^2.0.0"
     url "^0.11.0"
 
-expo@*, expo@~50.0.14:
+expo@*, expo@^50.0.14:
   version "50.0.14"
   resolved "https://registry.npmjs.org/expo/-/expo-50.0.14.tgz"
   integrity sha512-yLPdxCMVAbmeEIpzzyAuJ79wvr6ToDDtQmuLDMAgWtjqP8x3CGddXxUe07PpKEQgzwJabdHvCLP5Bv94wMFIjQ==
