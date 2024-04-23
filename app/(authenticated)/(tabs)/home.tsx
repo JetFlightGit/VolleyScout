@@ -3,7 +3,7 @@ import React from "react";
 import { ScrollView } from "react-native-gesture-handler";
 import { defaultStyles } from "@/constants/styles";
 import RoundBtn from "@/components/RoundBtn";
-import Dropdown from "@/components/dropdown";
+import Dropdown from "@/components/Dropdown";
 const addSomething = () => {
   console.log("Add something");
 };

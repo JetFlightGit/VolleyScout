@@ -10,7 +10,7 @@ import { defaultStyles } from "@/constants/styles";
 import colors from "@/constants/colors";
 import { Link, useRouter } from "expo-router";
 import { useSignUp } from "@clerk/clerk-expo";
-import Hairline from "@/components/hairline";
+import Hairline from "@/components/Hairline";
 
 const Page = () => {
   const [countryCode, setCountryCode] = useState("+49");
