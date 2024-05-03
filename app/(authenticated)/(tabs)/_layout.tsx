@@ -27,6 +27,7 @@ const Layout = () => {
       <Tabs.Screen
         name="team"
         options={{
+          tabBarHideOnKeyboard: true,
           title: "Team",
           tabBarIcon: ({ size, color }) => (
             <Ionicons name="people" size={size} color={color} />

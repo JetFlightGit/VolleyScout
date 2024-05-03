@@ -3,12 +3,18 @@ import { createJSONStorage, persist } from "zustand/middleware";
 import { zustandStorage } from "./mmkv-storage";
 
 export interface Player {
-  id: string;
-  name: string;
+  playerId: string;
+  firstName: string;
+  lastName: string;
   gender: string;
+  height: number;
+  email: string;
+  phoneNumber: string;
+  birthDate: Date;
+  position: string;
+  teamId: string;
   team: string;
   created: Date;
-  amount: number;
 }
 
 export interface PlayerState {

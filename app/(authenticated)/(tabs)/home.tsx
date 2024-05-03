@@ -24,13 +24,21 @@ const page = () => {
   };
 
   const createRandomPlayer = () => {
+    const firstName = Math.random().toString(36).substring(7);
+
     createPlayer({
-      id: Math.random().toString(),
-      name: "Added Player",
-      team: "Added Team",
-      gender: "Male",
+      playerId: firstName + Math.random().toString(36).substring(7),
+      firstName: firstName,
+      lastName: "",
+      gender: "",
+      height: 0,
+      email: "",
+      phoneNumber: "",
+      birthDate: new Date(),
+      position: "",
+      teamId: "",
+      team: "",
       created: new Date(),
-      amount: Math.floor(Math.random() * 1000) * (Math.random() > 0.5 ? 1 : -1),
     });
   };
 
@@ -39,7 +47,7 @@ const page = () => {
   };
 
   return (
-    <View>
+    <View style={{ flex: 1 }}>
       <View style={styles.container}>
         <Text style={defaultStyles.header}>
           {players.length} Players recorded!
@@ -52,13 +60,13 @@ const page = () => {
         <Dropdown />
       </View>
 
-      <ScrollView>
+      <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
         <View style={styles.players}>
           {players.length === 0 ? (
             <Text style={{ padding: 14, color: colors.gray }}>No Players</Text>
           ) : (
             players.map((player) => (
-              <View key={player.id} style={styles.player}>
+              <View key={player.playerId} style={styles.player}>
                 <View style={styles.circle}>
                   <Ionicons
                     name={player.gender === "Male" ? "male" : "female"}
@@ -67,8 +75,9 @@ const page = () => {
                   />
                 </View>
                 <View style={{ flex: 1 }}>
-                  <Text style={{ fontWeight: "bold" }}>{player.name}</Text>
-                  <Text>{player.team}</Text>
+                  <Text style={{ fontWeight: "bold" }}>{player.firstName}</Text>
+                  <Text>{player.lastName}</Text>
+                  <Text>{player.playerId}</Text>
                 </View>
                 <View>
                   <SquareBtn

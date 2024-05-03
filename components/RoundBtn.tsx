@@ -15,7 +15,7 @@ const RoundBtn = ({ title, icon, onPress }: RoundBtnProps) => {
       <View style={styles.circle}>
         <Ionicons name={icon} size={30} color={colors.dark} />
       </View>
-      <Text style={{ color: colors.dark }}>{title}</Text>
+      {title.length > 0 && <Text style={{ color: colors.dark }}>{title}</Text>}
     </TouchableOpacity>
   );
 };
